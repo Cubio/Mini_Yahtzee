@@ -59,15 +59,15 @@ export default Gameboard = ({ navigation, route }) => {
         }
     }, []);
 
-
+/*
     useEffect(() => {
         if (nbrOfThrowsLeft === 0 && !gameEndStatus) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Ei odota että viimeset pisteet lisätään ennenkuin tekee gameEndin
-            setRoundCount(prevCount => prevCount);//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!poistin sulkujen lopusta +1
+            //setRoundCount(prevCount => prevCount);//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!poistin sulkujen lopusta +1
             setStatus('Select your points before next throw');
             selectPointsAfterRound(); // Call the function to store selected points
         }
     }, [nbrOfThrowsLeft, gameEndStatus]);
-
+*/
 
 
 
@@ -88,13 +88,13 @@ export default Gameboard = ({ navigation, route }) => {
     };
 
     useEffect(() => {
-        console.log("Selected Dice Points:", selectedDicePoints);
+        //console.log("Selected Dice Points:", selectedDicePoints);
         if (throwsLeft === 0) {
-            console.log("Selected Dice Points:22222", selectedDicePoints);
-            selectPointsAfterRound();
+            //console.log("Selected Dice Points:22222", selectedDicePoints);
+           // selectPointsAfterRound();
             handleGameEnd();
         }
-    }, [throwsLeft]);
+    });
 
 
     //this useEffect is for handling the gameflow so that the game does not stop too early
@@ -178,7 +178,7 @@ export default Gameboard = ({ navigation, route }) => {
                 setDicePointsTotal(points);
                 setSelectedDicePoints(selectedPoints);
             } else {
-                setStatus(`You already selected points for ${i + 1}.`);//---------------------------------------------------Tämä teksti näkyy
+                setStatus('You already selected points for ${i + 1}.');//---------------------------------------------------Tämä teksti näkyy
             }
         } else {
             setStatus('Throw 3 times before setting points.');//---------------------------------------------------Tämä teksti näkyy
@@ -193,6 +193,11 @@ export default Gameboard = ({ navigation, route }) => {
     const throwDices = () => {
         if (gameEndStatus) {
             setStatus('Game over. Start a new game.'); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------  Ei tulosta tätä minnekkään
+
+            let finalPoints = getDicePointsTotal();
+            saveScore(playerName, finalPoints);
+
+            
             startNewGame();
             //return;
         }
@@ -211,9 +216,9 @@ export default Gameboard = ({ navigation, route }) => {
                     setStatus('Select points before throwing dices.');//----------------------------------------------------------------------Tämä teksti näkyy
                 }
             } else {
-                setGameEndStatus(false);
-                setNbrOfThrowsLeft(NBR_OF_THROWS);
-                setPlayerName('');
+                //setGameEndStatus(false);
+                //setNbrOfThrowsLeft(NBR_OF_THROWS);
+                //setPlayerName('');
             }
         } else {
             let spots = [...diceSpots];
@@ -249,7 +254,9 @@ export default Gameboard = ({ navigation, route }) => {
     }
 
     function selectPointsAfterRound() {
+        
         let selectedPoints = [...selectedDicePoints];
+        console.log('testi1:' +selectedPoints);
         if (selectedPoints.length === MAX_SPOT) {
             let points = [...dicePointsTotal];
             for (let i = 0; i < MAX_SPOT; i++) {
@@ -275,8 +282,9 @@ export default Gameboard = ({ navigation, route }) => {
     function getDicePointsColor(i) {
         if (selectedDicePoints[i]) {
             return '#FEECE2';
-        }
-        else {
+        } if (throwsLeft === 0) {
+            return '#dd1818';
+        } else {
             return '#FFBE98';
         }
     }
@@ -338,9 +346,10 @@ export default Gameboard = ({ navigation, route }) => {
         // Add bonus points to the total points
         // You can perform any other end-of-game logic here
         // For example, navigating to the scoreboard screen or displaying a game over message
+        //selectPointsAfterRound();
         setStatus('Game over. Choose last points.');//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!--------------------------------------- Tämän tulostaa kun peli loppuu liian aikasin eli ennen viimesen pisteen merkkaamista
-        let finalPoints = getDicePointsTotal();
-        saveScore(playerName, finalPoints);
+        
+
         setGameEndStatus(true);
     };
     /*const handleGameEnd = () => {
