@@ -24,10 +24,10 @@ export default function Home({ navigation }) {
     const handlePlayerName = (value) => {
         if (value.trim().length > 0) {
             setHasPlayerName(true);
-            Keyboard.dismiss();
+           Keyboard.dismiss();
         }
     }
-
+    Keyboard.sh();
     return (
         <>
             <ScrollView>
@@ -36,7 +36,7 @@ export default function Home({ navigation }) {
                     {!hasPlayerName ?
                         <>
                             <Text style={style.header2}>
-                                Enter your player name </Text>
+                                Enter your playername </Text>
                             <TextInput onChangeText={setPlayerName} autoFocus={true} style={style.textinput}></TextInput>
                             <Pressable
                                 onPress={() => handlePlayerName(playerName)}
