@@ -22,6 +22,7 @@ let board = [];
 
 export default Gameboard = ({ route }) => {
 
+    const [allowToSelectDicePoints, setAllowToSelectDicePoints] = useState(true);
     const [gameOngoing, setGameOngoing] = useState(false);
     const [throwsLeft, setThrowsLeft] = useState(18);
     const [totalPoints, setTotalPoints] = useState(0);
@@ -133,11 +134,13 @@ export default Gameboard = ({ route }) => {
     }
 
     function getDiceColor(i) {
-        return selectedDices[i] ? '#FEECE2' : '#FFBE98';
+        return selectedDices[i] ? '#f30a0a' : '#12024d';
     }
 
     const selectDicePoints = (i) => {
-        if (nbrOfThrowsLeft === 0) {
+        if (nbrOfThrowsLeft === 0 && allowToSelectDicePoints) {
+            console.log ('---:' )
+            console.log ('nro:' +dicePointsTotal[i])
             if (!selectedDicePoints[i] && dicePointsTotal[i] === 0) {
                 let selectedPoints = [...selectedDicePoints];
                 let points = [...dicePointsTotal];
@@ -147,6 +150,10 @@ export default Gameboard = ({ route }) => {
                 selectedPoints[i] = true;
                 setDicePointsTotal(points);
                 setSelectedDicePoints(selectedPoints);
+                if (nbrOfDices > 0) {
+                    setAllowToSelectDicePoints(false);
+                }
+                console.log ('nro22:' +nbrOfDices)
             } else {
                 setStatus('You already selected points for this spot.');
             }
@@ -161,30 +168,48 @@ export default Gameboard = ({ route }) => {
 
 
     const throwDices = () => {
+        console.log ('-----')
         if (gameEndStatus) {
             let finalPoints = getDicePointsTotal();
             saveScore(playerName, finalPoints);
             startNewGame();
         }
+        console.log ('111')
         if (nbrOfThrowsLeft === 0) {
             if (!gameEndStatus) {
                 const pointsSelected = selectedDicePoints.some(selected => selected);
                 if (pointsSelected) {
+                    console.log ('222')
                     setNbrOfThrowsLeft(NBR_OF_THROWS);
                     setSelectedDices(new Array(NBR_OF_DICES).fill(false));
                     setSelectedDicePoints(new Array(MAX_SPOT).fill(false));
-                    const newDiceSpots = Array.from({ length: NBR_OF_DICES }, () => Math.floor(Math.random() * 6) + 1);
-                    setDiceSpots(newDiceSpots);
+                    //const newDiceSpots = Array.from({ length: NBR_OF_DICES }, () => Math.floor(Math.random() * 6) + 1);
+                    //setDiceSpots(newDiceSpots);
+                    //setDicesThrown(true); // Set dicesThrown to true after throwing dices
+
+
+                    console.log ('444')
+                    let spots = [...diceSpots];
+                    for (let i = 0; i < NBR_OF_DICES; i++) {
+                        if (!selectedDices[i]) {
+                            let randomNumber = Math.floor(Math.random() * 6 + 1);
+                            board[i] = 'dice-' + randomNumber;
+                            spots[i] = randomNumber;
+                        }
+                    }
+                    setNbrOfThrowsLeft(2);
+                    setDiceSpots(spots);
+                    setStatus('Select and throw dices again.');
                     setDicesThrown(true); // Set dicesThrown to true after throwing dices
+                    setThrowsLeft(throwsLeft -1);
+                    setAllowToSelectDicePoints(true);
+
                 } else {
                     setStatus('Select points before throwing dices.');
                 }
-            } else {
-                //setGameEndStatus(false);
-                //setNbrOfThrowsLeft(NBR_OF_THROWS);
-                //setPlayerName('');
-            }
+            } 
         } else {
+            console.log ('333')
             let spots = [...diceSpots];
             for (let i = 0; i < NBR_OF_DICES; i++) {
                 if (!selectedDices[i]) {
@@ -198,6 +223,7 @@ export default Gameboard = ({ route }) => {
             setStatus('Select and throw dices again.');
             setDicesThrown(true); // Set dicesThrown to true after throwing dices
             setThrowsLeft(throwsLeft - 1);
+            setAllowToSelectDicePoints(true);
         }
     };
 
@@ -215,10 +241,13 @@ export default Gameboard = ({ route }) => {
 
 
     function getDicePointsColor(i) {
-        if (selectedDicePoints[i]) {
-            return '#FEECE2';
+        if (getSpotTotal(i) != 0 ){
+            return '#ff0000';
+
+        } if (selectedDicePoints[i]) {
+            return '#00ff37';
         } else {
-            return '#FFBE98';
+            return '#ec1aff';
         }
     }
 
